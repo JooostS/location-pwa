@@ -1,29 +1,36 @@
-const statusText = document.getElementById("status")
+const REQUIRED_ACCURACY = 25
+
+const gpsStatus = document.getElementById("gps-status")
+const accuracyText = document.getElementById("accuracy")
+
 const modal = document.getElementById("modal")
 const title = document.getElementById("modal-title")
 const text = document.getElementById("modal-text")
 const closeBtn = document.getElementById("close")
 
+closeBtn.onclick = () => modal.classList.add("hidden")
+
 let triggered = {}
 
-closeBtn.onclick = () => {
-  modal.classList.add("hidden")
-}
+let map = L.map("map").setView([0,0], 18)
 
-if(navigator.onLine){
-  alert("For best accuracy turn off Wi-Fi/Data so GPS is used.")
-}
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+maxZoom:19
+}).addTo(map)
 
-/* 
-ACCURACY SETTINGS
---------------------------------
-Typical accuracy values:
-GPS: 3m – 15m
-WiFi: 20m – 50m
-Cell: 100m – 1000m
-*/
+let userMarker = null
 
-const REQUIRED_ACCURACY = 25 // meters
+/* draw geofence circles */
+
+locations.forEach(loc=>{
+
+L.circle([loc.lat,loc.lng],{
+radius:loc.radius,
+color:"blue",
+fillOpacity:0.2
+}).addTo(map)
+
+})
 
 function distance(lat1, lon1, lat2, lon2){
 
@@ -35,29 +42,30 @@ const Δφ = (lat2-lat1) * Math.PI/180
 const Δλ = (lon2-lon1) * Math.PI/180
 
 const a =
-Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-Math.cos(φ1) * Math.cos(φ2) *
-Math.sin(Δλ/2) * Math.sin(Δλ/2)
+Math.sin(Δφ/2)*Math.sin(Δφ/2)+
+Math.cos(φ1)*Math.cos(φ2)*
+Math.sin(Δλ/2)*Math.sin(Δλ/2)
 
-const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+const c = 2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))
 
-return R * c
+return R*c
+
 }
 
-function showModal(location){
+function showModal(loc){
 
-title.textContent = location.name
-text.textContent = location.info
+title.textContent = loc.name
+text.textContent = loc.info
 
 modal.classList.remove("hidden")
 
 }
 
-function checkLocations(userLat,userLng){
+function checkLocations(lat,lng){
 
 locations.forEach(loc=>{
 
-const d = distance(userLat,userLng,loc.lat,loc.lng)
+const d = distance(lat,lng,loc.lat,loc.lng)
 
 if(d < loc.radius && !triggered[loc.name]){
 
@@ -76,67 +84,54 @@ const lat = position.coords.latitude
 const lng = position.coords.longitude
 const accuracy = position.coords.accuracy
 
-statusText.textContent =
-"Accuracy: " + Math.round(accuracy) + "m"
-
-if(accuracy > REQUIRED_ACCURACY){
-
-statusText.textContent += " (waiting for GPS lock...)"
-
-return
-}
-
-statusText.textContent =
-"GPS locked | Accuracy: " + Math.round(accuracy) + "m"
-
-checkLocations(lat,lng)
-
-}
-
-function error(err){
-statusText.textContent = "Location error: " + err.message
-}
-
-navigator.geolocation.watchPosition(
-success,
-error,
-{
-enableHighAccuracy: true,
-maximumAge: 0,
-timeout: 10000
-}
-)
-
-if("serviceWorker" in navigator){
-navigator.serviceWorker.register("service-worker.js")
-}
-
-const gpsIndicator = document.getElementById("gps-indicator")
-const gpsStatus = document.getElementById("gps-status")
-const accuracyText = document.getElementById("accuracy")
-
-function success(position){
-
-const lat = position.coords.latitude
-const lng = position.coords.longitude
-const accuracy = position.coords.accuracy
-
-accuracyText.textContent = "Accuracy: " + Math.round(accuracy) + " meters"
+accuracyText.textContent =
+"Accuracy: "+Math.round(accuracy)+"m"
 
 if(accuracy > REQUIRED_ACCURACY){
 
 gpsStatus.textContent = "Waiting for GPS lock..."
-gpsIndicator.classList.remove("locked")
-gpsIndicator.classList.add("searching")
-
 return
 
 }
 
-gpsStatus.textContent = "GPS Locked"
-gpsIndicator.classList.remove("searching")
-gpsIndicator.classList.add("locked")
+gpsStatus.textContent = "GPS locked"
+
+map.setView([lat,lng],18)
+
+if(!userMarker){
+
+userMarker = L.marker([lat,lng]).addTo(map)
+
+}else{
+
+userMarker.setLatLng([lat,lng])
+
+}
 
 checkLocations(lat,lng)
+
+}
+
+function error(){
+
+gpsStatus.textContent = "Location permission denied"
+
+}
+
+navigator.geolocation.watchPosition(
+
+success,
+error,
+{
+enableHighAccuracy:true,
+maximumAge:0,
+timeout:10000
+}
+
+)
+
+if("serviceWorker" in navigator){
+
+navigator.serviceWorker.register("service-worker.js")
 
 }

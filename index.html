@@ -10,7 +10,13 @@
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="style.css">
 
-<meta name="theme-color" content="#111827">
+<!-- Leaflet -->
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 </head>
 
@@ -20,30 +26,13 @@
 
 <header>
 <h1>📍 Location Guide</h1>
-<p class="subtitle">Walk around to discover nearby locations</p>
 </header>
 
-<div class="status-card">
+<div id="map"></div>
 
-<div class="status-row">
-
-<div id="gps-indicator" class="gps searching"></div>
-
-<div>
+<div class="status">
 <div id="gps-status">Searching for GPS...</div>
 <div id="accuracy">Waiting for location...</div>
-</div>
-
-</div>
-
-</div>
-
-<div class="instructions">
-
-<p>
-For best accuracy enable GPS and turn off Wi-Fi/Data.
-</p>
-
 </div>
 
 </div>
@@ -51,17 +40,14 @@ For best accuracy enable GPS and turn off Wi-Fi/Data.
 <!-- Modal -->
 
 <div id="modal" class="modal hidden">
-
 <div class="modal-card">
 
 <h2 id="modal-title"></h2>
-
 <p id="modal-text"></p>
 
-<button id="close">Continue exploring</button>
+<button id="close">Continue</button>
 
 </div>
-
 </div>
 
 <script src="locations.js"></script>
