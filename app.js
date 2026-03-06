@@ -110,3 +110,33 @@ timeout: 10000
 if("serviceWorker" in navigator){
 navigator.serviceWorker.register("service-worker.js")
 }
+
+const gpsIndicator = document.getElementById("gps-indicator")
+const gpsStatus = document.getElementById("gps-status")
+const accuracyText = document.getElementById("accuracy")
+
+function success(position){
+
+const lat = position.coords.latitude
+const lng = position.coords.longitude
+const accuracy = position.coords.accuracy
+
+accuracyText.textContent = "Accuracy: " + Math.round(accuracy) + " meters"
+
+if(accuracy > REQUIRED_ACCURACY){
+
+gpsStatus.textContent = "Waiting for GPS lock..."
+gpsIndicator.classList.remove("locked")
+gpsIndicator.classList.add("searching")
+
+return
+
+}
+
+gpsStatus.textContent = "GPS Locked"
+gpsIndicator.classList.remove("searching")
+gpsIndicator.classList.add("locked")
+
+checkLocations(lat,lng)
+
+}

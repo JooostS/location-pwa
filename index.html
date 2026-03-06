@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -9,20 +10,58 @@
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="style.css">
 
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#111827">
 
 </head>
+
 <body>
 
-<h1>Location Guide</h1>
-<p id="status">Getting your location...</p>
+<div class="app">
 
-<div id="modal" class="hidden">
-  <div class="modal-content">
-    <h2 id="modal-title"></h2>
-    <p id="modal-text"></p>
-    <button id="close">Close</button>
-  </div>
+<header>
+<h1>📍 Location Guide</h1>
+<p class="subtitle">Walk around to discover nearby locations</p>
+</header>
+
+<div class="status-card">
+
+<div class="status-row">
+
+<div id="gps-indicator" class="gps searching"></div>
+
+<div>
+<div id="gps-status">Searching for GPS...</div>
+<div id="accuracy">Waiting for location...</div>
+</div>
+
+</div>
+
+</div>
+
+<div class="instructions">
+
+<p>
+For best accuracy enable GPS and turn off Wi-Fi/Data.
+</p>
+
+</div>
+
+</div>
+
+<!-- Modal -->
+
+<div id="modal" class="modal hidden">
+
+<div class="modal-card">
+
+<h2 id="modal-title"></h2>
+
+<p id="modal-text"></p>
+
+<button id="close">Continue exploring</button>
+
+</div>
+
 </div>
 
 <script src="locations.js"></script>
