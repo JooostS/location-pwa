@@ -14,6 +14,15 @@ lat: 52.076832764754336,
 lng: 4.751099914917804,
 radius: 20,
 info: "This windmill was built in 1780 and restored in 1995."
+},
+
+{
+name: "Hoornbeeck",
+lat: 52.01735656501205,
+lng: 4.684350760925543,
+radius: 30,
+info: "School"
 }
 
 ];
+
